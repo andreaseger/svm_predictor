@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+#
+begin
+  require 'svm_predictor/api/app.rb'
+rescue LoadError => e
+  require 'rubygems'
+  path = File.expand_path '../../lib', __FILE__
+  $:.unshift(path) if File.directory?(path) && !$:.include?(path)
+  require 'svm_predictor/api/app.rb'
+end
