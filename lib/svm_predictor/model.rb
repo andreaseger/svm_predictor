@@ -70,6 +70,7 @@ module SvmPredictor
     private
     def prepare_model
       self.id ||= next_id
+      self.created_at ||= Time.now.to_a
       self.libsvm_file ||= libsvm_filename
       self.preprocessor_class ||= preprocessor.class.to_s
       self.selector_class ||= selector.class.to_s

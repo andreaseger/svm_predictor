@@ -10,7 +10,7 @@ describe SvmPredictor::Model do
                       :preprocessor_properties,
                       :selector_class,
                       :selector_properties,
-                      :properties,
+                      :properties
                     ]
   let(:modelhash) do
     {
@@ -37,44 +37,54 @@ describe SvmPredictor::Model do
     @svm = Libsvm::Model.train(problem, parameter)
   end
 
-  context 'instance' do
-    let(:model) do
-      SvmPredictor::Model.new svm: @svm,
-                              preprocessor: Preprocessor::Simple.new,
-                              selector: Selector::Simple.new(global_dictionary: modelhash[:dictionary]),
-                              classification: :function
+  let(:model) do
+    SvmPredictor::Model.new svm: @svm,
+                            preprocessor: Preprocessor::Simple.new,
+                            selector: Selector::Simple.new(global_dictionary: modelhash[:dictionary]),
+                            classification: :function
+  end
+  it "should be able to serialize the model" do
+    ->{model.serializable_hash}.should_not raise_error
+  end
+  context "#serializable_hash" do
+    it "should include all important attributes" do
+      model.serializable_hash.keys.should include(*IMPORTANT_ATTRS)
     end
-    it "should be able to serialize the model" do
-      ->{model.serializable_hash}.should_not raise_error
-    end
-    context "#serializable_hash" do
-      it "should include all important attributes" do
-        model.serializable_hash.keys.should =~ IMPORTANT_ATTRS
-      end
 
-      IMPORTANT_ATTRS.each do |attr|
-        it "should correct serialize #{attr}" do
-          model.serializable_hash[attr].should == modelhash[attr]
-        end
+    IMPORTANT_ATTRS.each do |attr|
+      it "should correct serialize #{attr}" do
+        model.serializable_hash[attr].should == modelhash[attr]
       end
     end
-    context "#next_id" do
-      it "should select the next available id"
+    it "sould set created at to Time.now" do
+      Timecop.freeze
+      model.serializable_hash[:created_at].should == Time.now.to_a
     end
-    context '#save' do
-      it "should assign a id to the model" do
-        model.id = nil
-        model.expects(:next_id).returns(345)
-        model.save('tmp')
-      end
-      it "should serialize the attributes" do
-        model.expects(:serializable_hash).returns(modelhash)
-        model.save('tmp')
-      end
-      it "should make json out of the attributes" do
-        model.expects(:to_json).returns(modelhash.to_json)
-        model.save('tmp')
-      end
+  end
+  context "#next_id" do
+    it "should select the next available id"
+  end
+  context '#save' do
+    it "should assign a id to the model" do
+      model.id = nil
+      model.expects(:next_id).returns(345)
+      model.save('tmp/spec')
+    end
+    it "should serialize the attributes" do
+      model.expects(:serializable_hash).returns(modelhash)
+      model.save('tmp/spec')
+    end
+    it "should make json out of the attributes" do
+      model.expects(:to_json).returns(modelhash.to_json)
+      model.save('tmp/spec')
+    end
+  end
+  context "#load" do
+    before(:each) do
+      @svm.save('tmp/spec/345-model.libsvm')
+    end
+    it "should not fail" do
+      ->{SvmPredictor::Model.load(modelhash)}.should_not raise_error
     end
   end
 end

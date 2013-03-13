@@ -30,7 +30,6 @@ module SvmPredictor
     end
     def initialize(params={})
       @_attributes = {}
-      @_indizies = {}
       @id = nil
       params.each do |key, value|
         send("#{key}=", value)
