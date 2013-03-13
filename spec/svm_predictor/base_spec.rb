@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-class MockModel < Predictor::Base
+class MockModel < SvmPredictor::Base
   attribute :body, :title, :created_at
 end
 
-describe Predictor::Base do
+describe SvmPredictor::Base do
   #it_should_behave_like "ActiveModel"
   let(:modelhash) do
-    {'body'=>"Lorem Ipsum", 'title' => "some test" }
+    { body: "Lorem Ipsum", title: "some test", created_at: nil }
   end
 
   context 'class' do
@@ -20,8 +20,8 @@ describe Predictor::Base do
     context '#new' do
       it 'should create accessors for all hash key/value pairs' do
         model = MockModel.new modelhash
-        model.body.should == modelhash['body']
-        model.title.should == modelhash['title']
+        model.body.should == modelhash[:body]
+        model.title.should == modelhash[:title]
       end
     end
   end

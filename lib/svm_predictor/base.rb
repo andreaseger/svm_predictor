@@ -1,4 +1,5 @@
 require 'json'
+
 module SvmPredictor
   class Base
     attr_accessor :id
@@ -15,10 +16,7 @@ module SvmPredictor
       end
     end
     def serializable_hash
-      attributes.inject({:id => @id}) do |a,key|
-        a[key] = send(key)
-        a
-      end
+      @_attributes.merge(id: @id)
     end
     def to_json
       serializable_hash.to_json

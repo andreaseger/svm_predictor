@@ -1,4 +1,4 @@
-require_realive 'base'
+require_relative 'base'
 require "active_support/inflector"
 
 module SvmPredictor
@@ -35,14 +35,16 @@ module SvmPredictor
     end
 
     def created_at
-      Time.mktime *super
+      Time.mktime *@_attributes[:created_at] unless @_attributes[:created_at].nil?
     end
-    def save
+    def serializable_hash
       prepare_model
-      self.libsvm_file, filename = filenames
-      self.created_at = Time.now.to_a
-      svm.save(File.join(BASEDIR, model_file))
-      IO.save(File.join(BASEDIR, filename), self.to_json)
+      super
+    end
+    def save(basedir=BASEDIR)
+      prepare_model
+      svm.save(File.join(basedir, libsvm_filename))
+      IO.write(File.join(basedir, filename), self.to_json)
     end
 
     def self.load_file(filename)
@@ -68,15 +70,19 @@ module SvmPredictor
     private
     def prepare_model
       self.id ||= next_id
+      self.libsvm_file ||= libsvm_filename
       self.preprocessor_class ||= preprocessor.class.to_s
-      self.selector_class ||= preprocessor.class.to_s
+      self.selector_class ||= selector.class.to_s
       self.dictionary ||= selector.global_dictionary
       self.preprocessor_properties.merge!(industry_map: preprocessor.industry_map ) if preprocessor.respond_to? :industry_map
       self.selector_properties.merge!(gram_size: selector.gram_size ) if selector.respond_to? :gram_size
-      self.properties.merge!(dictionary_size: dictionary.size, cost: svm.param.cost, gamma: svm.param.gamma)
+      self.properties.merge!(dictionary_size: dictionary.size, cost: svm.param.c, gamma: svm.param.gamma)
     end
-    def filenames
-      [ "#{id}-model.libsvm", "#{id}-predictor.json" ]
+    def libsvm_filename
+      "#{id}-model.libsvm"
+    end
+    def filename
+      "#{id}-predictor.json"
     end
     def next_id
       #TODO

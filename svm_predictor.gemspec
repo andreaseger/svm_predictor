@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = SvmPredictor::VERSION
   spec.authors       = ["Andreas Eger"]
   spec.email         = ["dev@eger-andreas.de"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
+  spec.description   = %q{shared predictor model and api helper}
+  spec.summary       = %q{helper model to save and load libsvm models generated via svm_helper and svm_trainer}
+  spec.homepage      = "https://github.com/sch1zo/svm_predictor"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
@@ -18,7 +18,8 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "svm_helper" "~> 0.1"
+  spec.add_dependency "svm_helper", "~> 0.1"
+  spec.add_dependency "activesupport"
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
