@@ -20,6 +20,17 @@ Or install it yourself as:
 
 TODO: Write usage instructions here
 
+### API
+
+start with
+
+    svm_predictor_api
+
+then you can test with something like this
+
+    curl -v -H "Accept: application/json" -H "Content-type: application/json" -X POST -d ' {"user":{"first_name":"firstname","last_name":"lastname","email":"email@email.com","password":"app123","password_confirmation":"app123"}}' localhost:4567/predict
+
+
 ## Contributing
 
 1. Fork it
