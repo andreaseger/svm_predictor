@@ -24,7 +24,11 @@ module SvmPredictor
     # @param  job [Job]
     #
     # @return [Integer,Double] label as Integer and the probability of this label
-    def predict title, description, classification
+    def predict title, description, classification_id
+      # TODO job = create_job(title, description, classification_id)
+      #   or preprocessor.process(title, description, classification_id, classification)
+      #   or something like that
+      #   maybe even change preprocessor and selector interface because the current one makes not sense
       data = preprocessor.process(job, classification)
       features = Libsvm::Node.features(selector.generate_vector(data, classification).data)
 
