@@ -1,6 +1,7 @@
 # Svm Predictor
 
-TODO: Write a gem description
+shared helper class which saves settings of a preprocessing and feature selection.
+Also can load a libsvm model to predict data.
 
 ## Installation
 
@@ -18,7 +19,13 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+``` ruby
+SvmPredictor::Model.new svm: @svm,
+                        preprocessor: Preprocessor::Simple.new,
+                        selector: Selector::Simple.new,
+                        classification: :function,
+                        basedir: 'tmp/spec'
+```
 
 ### API
 
