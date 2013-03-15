@@ -27,7 +27,7 @@ module SvmPredictor
     end
     post '/predict' do
       data = JSON.parse(request.body.read)
-      json Hash[predictors.map { |classification, predictor|
+      json Hash[settings.predictors.map { |classification, predictor|
         [ classification,
           predictor.predict(data['title'], data['description'], data["#{classification}_id"])]
       }]
