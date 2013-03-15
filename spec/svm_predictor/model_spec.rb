@@ -32,6 +32,7 @@ describe SvmPredictor::Model do
     problem = Libsvm::Problem.new
     parameter = Libsvm::SvmParameter.new
     parameter.c = 10
+    parameter.probability = 1
     examples = [ [1,0,1], [-1,0,-1] ].map {|ary| Libsvm::Node.features(ary) }
     problem.set_examples([1,-1], examples)
     @svm = Libsvm::Model.train(problem, parameter)
@@ -40,7 +41,7 @@ describe SvmPredictor::Model do
   let(:model) do
     SvmPredictor::Model.new svm: @svm,
                             preprocessor: Preprocessor::Simple.new,
-                            selector: Selector::Simple.new(global_dictionary: modelhash[:dictionary]),
+                            selector: Selector::Simple.new(:function, global_dictionary: modelhash[:dictionary]),
                             classification: :function,
                             basedir: 'tmp/spec'
   end
@@ -100,6 +101,19 @@ describe SvmPredictor::Model do
     end
     it "should not fail" do
       ->{SvmPredictor::Model.load(modelhash.merge(basedir: 'tmp/spec'))}.should_not raise_error
+    end
+  end
+  context "#predict" do
+    it "should not fail" do
+      ->{model.predict("title", "description words foo", 4)}.should_not raise_error
+    end
+    it "should return either 0 or 1 for the label" do
+      label,_ = model.predict("title", "description words foo", 4)
+      [0,1].should include(label)
+    end
+    it "should return a value between 0.5 and 1.0 for probability" do
+      _, probability = model.predict("title", "description words foo", 4)
+      probability.should be_between(0.5,1.0)
     end
   end
 end

@@ -63,7 +63,7 @@ module SvmPredictor
       p = super
       p.svm = Libsvm::Model.load(File.join(p.basedir, p.libsvm_file))
       p.preprocessor = p.preprocessor_class.constantize.new(p.preprocessor_properties)
-      p.selector = p.selector_class.constantize.new(p.selector_properties.merge( global_dictionary: p.dictionary, classification: p.classification))
+      p.selector = p.selector_class.constantize.new(p.classification, p.selector_properties.merge( global_dictionary: p.dictionary ))
       p
     end
 

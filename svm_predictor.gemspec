@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "svm_helper", "~> 0.1"
+  spec.add_dependency "svm_helper", ">= 0.1.1"
   # spec.add_dependency "rb-libsvm", "~> 1.1.2"
   spec.add_dependency "activesupport"
   spec.add_dependency "sinatra"
