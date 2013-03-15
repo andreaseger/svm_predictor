@@ -3,7 +3,6 @@ require "active_support/inflector"
 
 module SvmPredictor
   class Model < SvmPredictor::Base
-    BASEDIR = File.expand_path(File.dirname(__FILE__) + '../../results')
     attribute :libsvm_file,
               :classification,
               :preprocessor_class,
@@ -45,7 +44,7 @@ module SvmPredictor
       prepare_model
       super
     end
-    def save(basedir=BASEDIR)
+    def save(basedir)
       prepare_model
       svm.save(File.join(basedir, libsvm_filename))
       IO.write(File.join(basedir, filename), self.to_json)
