@@ -29,8 +29,9 @@ module SvmPredictor
       #   or preprocessor.process(title, description, classification_id, classification)
       #   or something like that
       #   maybe even change preprocessor and selector interface because the current one makes not sense
-      data = preprocessor.process(job, classification)
-      features = Libsvm::Node.features(selector.generate_vector(data, classification).data)
+      job = {title: title, description: description, id: classification_id}
+      data = preprocessor.process(job)
+      features = Libsvm::Node.features(selector.generate_vector(data).data)
 
       label, probs = svm.predict_probability(features)
       # TODO find a more reliable way to find the correct probability value for the given label

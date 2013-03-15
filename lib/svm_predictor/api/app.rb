@@ -11,24 +11,26 @@ module SvmPredictor
     set :root, File.dirname(__FILE__)
     set :public_folder, File.join(root, 'public')
 
-    set :config, JSON.parse(IO.read('config.json'))
-    set :function_predictor, SvmPredictor.load_file(config['function_predictor'])
-    set :industry_predictor, SvmPredictor.load_file(config['industry_predictor'])
-    set :career_level_predictor, SvmPredictor.load_file(config['career_level_predictor'])
+    set :config, JSON.parse(IO.read('config/settings.json'))
+    set :classifications, %w(function industry career_level)
+    set :predictors, {}
+    classifications.each do |classification|
+      key = "#{classification}_predictor"
+      if config[key]
+        predictors[classification] = SvmPredictor::Model.load_file(config[key])
+        p "#{key} loaded"
+      end
+    end
 
     get '/' do
       json hello: "World"
     end
-    post '/echo' do
-      data = JSON.parse(request.body.read)
-      json echo: data
-    end
     post '/predict' do
       data = JSON.parse(request.body.read)
-      function = function_predictor.predict(data['title'], data['description'], data['function_id']) if function_predictor
-      industry = industry_predictor.predict(data['title'], data['description'], data['industry_id']) if industry_predictor
-      career_level = career_level_predictor.predict(data['title'], data['description'], data['career_level_id']) if career_level_predictor
-      json function: function, industry: industry, career_level: career_level
+      json Hash[predictors.map { |classification, predictor|
+        [ classification,
+          predictor.predict(data['title'], data['description'], data["#{classification}_id"])]
+      }]
     end
   end
 end
