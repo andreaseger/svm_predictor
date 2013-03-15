@@ -14,8 +14,8 @@ describe SvmPredictor::Model do
                     ]
   let(:modelhash) do
     {
-      id: 345,
-      libsvm_file: "345-model.libsvm",
+      id: 1,
+      libsvm_file: "1-model.libsvm",
       classification: :function,
       preprocessor_class: Preprocessor::Simple.to_s,
       selector_class: Selector::Simple.to_s,
@@ -41,7 +41,8 @@ describe SvmPredictor::Model do
     SvmPredictor::Model.new svm: @svm,
                             preprocessor: Preprocessor::Simple.new,
                             selector: Selector::Simple.new(global_dictionary: modelhash[:dictionary]),
-                            classification: :function
+                            classification: :function,
+                            basedir: 'tmp/spec'
   end
   it "should be able to serialize the model" do
     ->{model.serializable_hash}.should_not raise_error
@@ -62,21 +63,35 @@ describe SvmPredictor::Model do
     end
   end
   context "#next_id" do
-    it "should select the next available id"
+    it "should start with 1 if folder is empty" do
+      model.send(:next_id).should == 1
+    end
+    it "should select the next available id" do
+      FileUtils.touch('tmp/spec/23-foo')
+      model.send(:next_id).should == 24
+    end
   end
   context '#save' do
     it "should assign a id to the model" do
       model.id = nil
       model.expects(:next_id).returns(345)
-      model.save('tmp/spec')
+      model.save
+    end
+    it "should fail if basedir is nil" do
+      model.basedir = nil
+      -> {model.save}.should raise_error
+    end
+    it "should fail if basedir is empty" do
+      model.basedir = ''
+      -> {model.save}.should raise_error
     end
     it "should serialize the attributes" do
       model.expects(:serializable_hash).returns(modelhash)
-      model.save('tmp/spec')
+      model.save
     end
     it "should make json out of the attributes" do
       model.expects(:to_json).returns(modelhash.to_json)
-      model.save('tmp/spec')
+      model.save
     end
   end
   context "#load" do
@@ -84,7 +99,7 @@ describe SvmPredictor::Model do
       @svm.save('tmp/spec/345-model.libsvm')
     end
     it "should not fail" do
-      ->{SvmPredictor::Model.load(modelhash)}.should_not raise_error
+      ->{SvmPredictor::Model.load(modelhash.merge(basedir: 'tmp/spec'))}.should_not raise_error
     end
   end
 end

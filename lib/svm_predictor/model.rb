@@ -16,7 +16,8 @@ module SvmPredictor
               :created_at
     attr_accessor :svm,
                   :preprocessor,
-                  :selector
+                  :selector,
+                  :basedir
 
     #
     # predict the label w/ probability of a given job
@@ -44,21 +45,22 @@ module SvmPredictor
       prepare_model
       super
     end
-    def save(basedir)
+    def save
+      raise 'basedir not specified' if basedir.nil? || basedir.empty?
       prepare_model
       svm.save(File.join(basedir, libsvm_filename))
       IO.write(File.join(basedir, filename), self.to_json)
     end
 
     def self.load_file(filename)
-      load_json IO.read(filename)
+      load_json IO.read(filename), File.dirname(File.expand_path(filename))
     end
-    def self.load_json(json)
-      load JSON.parse(json)
+    def self.load_json(json, basedir)
+      load JSON.parse(json).merge(basedir: basedir)
     end
     def self.load(params)
       p = super
-      p.svm = Libsvm::Model.load(p.libsvm_file)
+      p.svm = Libsvm::Model.load(File.join(p.basedir, p.libsvm_file))
       p.preprocessor = p.preprocessor_class.constantize.new(p.preprocessor_properties)
       p.selector = p.selector_class.constantize.new(p.selector_properties.merge( global_dictionary: p.dictionary, classification: p.classification))
       p
@@ -88,9 +90,12 @@ module SvmPredictor
     def filename
       "#{id}-predictor.json"
     end
+    def results_filename
+      "#{id}-results"
+    end
     def next_id
-      #TODO
-      345
+      raise 'basedir not specified' if basedir.nil?
+      (Dir["#{@basedir}/*"].map{|e| File.basename(e).match(/^(\d+)-/)[1].to_i }.max || 0).succ
     end
   end
 end
