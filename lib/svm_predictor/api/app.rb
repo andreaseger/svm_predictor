@@ -11,7 +11,7 @@ module SvmPredictor
     set :root, File.dirname(__FILE__)
     set :public_folder, File.join(root, 'public')
 
-    set :config, JSON.parse(IO.read('config/settings.json'))
+    set :config, JSON.parse(IO.read(config_file))
     set :classifications, %w(function industry career_level)
     set :predictors, {}
     classifications.each do |classification|
@@ -34,7 +34,3 @@ module SvmPredictor
     end
   end
 end
-# Run the app!
-#
-puts "Hello, you're running your web app from a gem!"
-SvmPredictor::Api.run!

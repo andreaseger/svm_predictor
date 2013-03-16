@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-#
+
 begin
   require 'svm_predictor/api/app.rb'
 rescue LoadError => e
@@ -8,3 +8,10 @@ rescue LoadError => e
   $:.unshift(path) if File.directory?(path) && !$:.include?(path)
   require 'svm_predictor/api/app.rb'
 end
+
+if ARGV.size == 2 && ARGV[0] == '-x'
+  SvmPredictor::Api.set :config_file, File.expand_path(ARGV[1])
+else
+  SvmPredictor::Api.set :config_file, 'config/settings.json'
+end
+SvmPredictor::Api.run!
