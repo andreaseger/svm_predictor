@@ -109,7 +109,7 @@ describe SvmPredictor::Model do
     end
     it "should return either 0 or 1 for the label" do
       label,_ = model.predict("title", "description words foo", 4)
-      [0,1].should include(label)
+      [false, true].should include(label)
     end
     it "should return a value between 0.5 and 1.0 for probability" do
       _, probability = model.predict("title", "description words foo", 4)

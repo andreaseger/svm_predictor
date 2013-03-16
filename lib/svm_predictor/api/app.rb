@@ -11,15 +11,21 @@ module SvmPredictor
     set :root, File.dirname(__FILE__)
     set :public_folder, File.join(root, 'public')
 
-    set :config, JSON.parse(IO.read(config_file))
-    set :classifications, %w(function industry career_level)
-    set :predictors, {}
-    classifications.each do |classification|
-      key = "#{classification}_predictor"
-      if config[key]
-        predictors[classification] = SvmPredictor::Model.load_file(config[key])
-        p "#{key} loaded"
-      end
+    def self.setup path='config/settings.json'
+      path = File.expand_path(path)
+      config = JSON.parse(IO.read(path))
+      set :predictors,  Hash[%w(function industry career_level).map { |classification|
+                          key = "#{classification}_predictor"
+                          if config[key]
+                            puts "loading #{key}..."
+                            [
+                              classification,
+                              SvmPredictor::Model.load_file(
+                                File.realdirpath(File.join(File.dirname(path), config['basedir'], config[key]))
+                              )
+                            ]
+                          end
+                        }.compact]
     end
 
     get '/' do

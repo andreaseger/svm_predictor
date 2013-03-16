@@ -36,7 +36,7 @@ module SvmPredictor
       label, probs = svm.predict_probability(features)
       # TODO find a more reliable way to find the correct probability value for the given label
       # but nevertheless this should be correct
-      return label, probs.max
+      return !label.zero?, probs.max
     end
 
     def created_at
