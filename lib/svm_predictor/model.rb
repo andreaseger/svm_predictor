@@ -62,8 +62,8 @@ module SvmPredictor
     def self.load(params)
       p = super
       p.svm = Libsvm::Model.load(File.join(p.basedir, p.libsvm_file))
-      p.preprocessor = p.preprocessor_class.constantize.new(p.preprocessor_properties.merge(parallel: true))
-      p.selector = p.selector_class.constantize.new(p.classification.to_sym, p.selector_properties.merge( parallel: true, global_dictionary: p.dictionary ))
+      p.preprocessor = p.preprocessor_class.constantize.new({parallel: true}.merge(p.preprocessor_properties))
+      p.selector = p.selector_class.constantize.new(p.classification.to_sym, {parallel: true, global_dictionary: p.dictionary}.merge(p.selector_properties))
       p
     end
 
