@@ -81,7 +81,7 @@ module SvmPredictor
       self.preprocessor_class ||= preprocessor.class.to_s
       self.selector_class ||= selector.class.to_s
       self.dictionary ||= selector.global_dictionary
-      self.preprocessor_properties.merge!(industry_map: preprocessor.industry_map ) if preprocessor.respond_to? :industry_map
+      self.preprocessor_properties.merge!(id_map: preprocessor.id_map ) if preprocessor.respond_to? :id_map
       self.selector_properties.merge!(gram_size: selector.gram_size ) if selector.respond_to? :gram_size
       self.properties.merge!(dictionary_size: dictionary.size, cost: svm.param.c, gamma: svm.param.gamma)
     end
