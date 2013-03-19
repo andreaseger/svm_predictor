@@ -60,7 +60,7 @@ describe SvmPredictor::Model do
     end
     it "sould set created at to Time.now" do
       Timecop.freeze
-      model.serializable_hash[:created_at].should == Time.now.to_a
+      model.serializable_hash[:created_at].should == Time.now.to_s
     end
   end
   context "#next_id" do

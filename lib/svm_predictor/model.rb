@@ -1,4 +1,5 @@
 require_relative 'base'
+require 'time'
 require "active_support/inflector"
 
 module SvmPredictor
@@ -40,7 +41,7 @@ module SvmPredictor
     end
 
     def created_at
-      Time.mktime *@_attributes[:created_at] unless @_attributes[:created_at].nil?
+      Time.parse @_attributes[:created_at] unless @_attributes[:created_at].nil?
     end
     def serializable_hash
       prepare_model
@@ -62,7 +63,12 @@ module SvmPredictor
     def self.load(params)
       p = super
       p.svm = Libsvm::Model.load(File.join(p.basedir, p.libsvm_file))
-      p.preprocessor = p.preprocessor_class.constantize.new({parallel: true}.merge(p.preprocessor_properties))
+      p.preprocessor = if p.preprocessor_class =~ /mapping/i
+                        id_map = Hash[p.preprocessor_properties['id_map']]
+                        p.preprocessor_class.constantize.new(id_map, {parallel: true}.merge(p.preprocessor_properties.except('id_map')))
+                      else
+                        p.preprocessor_class.constantize.new({parallel: true}.merge(p.preprocessor_properties))
+                      end
       p.selector = p.selector_class.constantize.new(p.classification.to_sym, {parallel: true, global_dictionary: p.dictionary}.merge(p.selector_properties))
       p
     end
@@ -76,12 +82,12 @@ module SvmPredictor
     private
     def prepare_model
       self.id ||= next_id
-      self.created_at ||= Time.now.to_a
+      self.created_at ||= Time.now.to_s
       self.libsvm_file ||= libsvm_filename
       self.preprocessor_class ||= preprocessor.class.to_s
       self.selector_class ||= selector.class.to_s
       self.dictionary ||= selector.global_dictionary
-      self.preprocessor_properties.merge!(id_map: preprocessor.id_map ) if preprocessor.respond_to? :id_map
+      self.preprocessor_properties.merge!(id_map: preprocessor.id_map.to_a ) if preprocessor.respond_to? :id_map
       self.selector_properties.merge!(gram_size: selector.gram_size ) if selector.respond_to? :gram_size
       self.properties.merge!(dictionary_size: dictionary.size, cost: svm.param.c, gamma: svm.param.gamma)
     end
