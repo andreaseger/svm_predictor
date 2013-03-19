@@ -1,6 +1,7 @@
 require_relative 'base'
 require 'time'
 require "active_support/inflector"
+require "active_support/core_ext/hash"
 
 module SvmPredictor
   class Model < SvmPredictor::Base
