@@ -93,13 +93,13 @@ module SvmPredictor
       self.properties.merge!(dictionary_size: dictionary.size, cost: svm.param.c, gamma: svm.param.gamma)
     end
     def libsvm_filename
-      "#{id}-model.libsvm"
+      "#{"%04d" % id}-model.libsvm"
     end
     def filename
-      "#{id}-predictor.json"
+      "#{"%04d" % id}-predictor.json"
     end
     def results_filename
-      "#{id}-results"
+      "#{"%04d" % id}-results"
     end
     def next_id
       raise 'basedir not specified' if basedir.nil?
