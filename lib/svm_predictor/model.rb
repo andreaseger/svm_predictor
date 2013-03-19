@@ -80,6 +80,9 @@ module SvmPredictor
       self.selector_properties ||= {}
       self.properties ||= {}
     end
+    def results_filename
+      "#{"%04d" % id}-results"
+    end
     private
     def prepare_model
       self.id ||= next_id
@@ -97,9 +100,6 @@ module SvmPredictor
     end
     def filename
       "#{"%04d" % id}-predictor.json"
-    end
-    def results_filename
-      "#{"%04d" % id}-results"
     end
     def next_id
       raise 'basedir not specified' if basedir.nil?
