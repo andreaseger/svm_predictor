@@ -10,8 +10,8 @@ platforms :ruby do
   gem "rb-libsvm", '~>1.1.2',  github: 'sch1zo/rb-libsvm', require: 'libsvm'
 end
 
-
 group :development do
+  gem 'thin'
   gem 'pry'
   gem 'guard-rspec'
 
