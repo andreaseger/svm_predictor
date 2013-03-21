@@ -1,16 +1,31 @@
 #!/usr/bin/env ruby
+require 'optparse'
 
-begin
-  require 'svm_predictor/api/app.rb'
-rescue LoadError => e
-  require 'rubygems'
-  path = File.expand_path '../../lib', __FILE__
-  $:.unshift(path) if File.directory?(path) && !$:.include?(path)
-  require 'svm_predictor/api/app.rb'
+options={}
+optparse = OptionParser.new do |opts|
+  opts.on( "-c", "--config-file FILE", String, "Config File" ) do |opt|
+    options[:config] = opt
+  end
+
+  opts.on( "-p", "--port PORT", String, "use PORT (default: 4567)" ) do |opt|
+    options[:port] = opt
+  end
+  opts.on( "-o", "--host HOST", String, "listen on HOST (default: 0.0.0.0)" ) do |opt|
+    options[:port] = opt
+  end
+
+  opts.on( '-?', '--help', 'Display this screen' ) do
+    puts opts
+    exit
+  end
 end
+optparse.parse!
 
-if ARGV.size == 2 && ARGV[0] == '-x'
-  SvmPredictor::Api.setup ARGV[1]
+require 'svm_predictor/api/app.rb'
+SvmPredictor::Api.set :port, options[:port] if options[:port]
+SvmPredictor::Api.set :host, options[:host] if options[:host]
+if options[:config]
+  SvmPredictor::Api.setup options[:config]
 else
   SvmPredictor::Api.setup
 end

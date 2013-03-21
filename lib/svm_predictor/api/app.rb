@@ -1,13 +1,10 @@
 require 'sinatra/base'
-require 'sinatra/json'
 require 'json'
 
 require 'svm_predictor'
 
 module SvmPredictor
   class Api < Sinatra::Base
-    helpers Sinatra::JSON
-
     set :root, File.dirname(__FILE__)
     set :public_folder, File.join(root, 'public')
     enable :inline_templates
@@ -27,6 +24,10 @@ module SvmPredictor
                             ]
                           end
                         }.compact]
+    end
+    def json obj
+      content_type :json
+      obj.to_json
     end
 
     get '/settings.json' do

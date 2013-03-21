@@ -11,7 +11,7 @@ platforms :ruby do
 end
 
 group :development do
-  gem 'thin'
+#  gem 'thin'
   gem 'pry'
   gem 'guard-rspec'
 
