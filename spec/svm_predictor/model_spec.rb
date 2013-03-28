@@ -15,7 +15,7 @@ describe SvmPredictor::Model do
   let(:modelhash) do
     {
       id: 1,
-      libsvm_file: "1-model.libsvm",
+      libsvm_file: "0001-model.libsvm",
       classification: :function,
       preprocessor_class: Preprocessor::Simple.to_s,
       selector_class: Selector::Simple.to_s,
