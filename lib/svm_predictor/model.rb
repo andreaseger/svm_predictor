@@ -48,11 +48,11 @@ module SvmPredictor
       prepare_model
       super
     end
-    def save
+    def save pretty=false
       raise 'basedir not specified' if basedir.nil? || basedir.empty?
       prepare_model
       svm.save(File.join(basedir, libsvm_filename))
-      IO.write(File.join(basedir, filename), self.to_json)
+      IO.write(File.join(basedir, filename), self.to_json(pretty))
     end
 
     def self.load_file(filename)

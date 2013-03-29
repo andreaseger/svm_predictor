@@ -38,5 +38,21 @@ describe SvmPredictor::Base do
         model.serializable_hash.should == modelhash.merge(id: nil)
       end
     end
+    context "#to_json" do
+      it "should call serializable_hash" do
+        model.expects(:serializable_hash)
+        model.to_json
+      end
+      it "should return a string" do
+        model.to_json
+      end
+      it "should generate valid json" do
+        json = model.to_json
+        ->{JSON.parse(json)}.should_not raise_error(JSON::ParserError)
+      end
+      it "should pretty print json it true is passed" do
+        model.to_json(true).should match(/\n/)
+      end
+    end
   end
 end

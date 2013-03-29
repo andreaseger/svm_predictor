@@ -18,8 +18,12 @@ module SvmPredictor
     def serializable_hash
       @_attributes.merge(id: @id)
     end
-    def to_json
-      serializable_hash.to_json
+    def to_json pretty=false
+      if pretty
+        JSON.pretty_generate(serializable_hash)
+      else
+        serializable_hash.to_json
+      end
     end
 
     def save
