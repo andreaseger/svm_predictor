@@ -11,7 +11,6 @@ platforms :ruby do
 end
 
 group :development do
-#  gem 'thin'
   gem 'pry'
   gem 'guard-rspec'
 
@@ -21,6 +20,7 @@ group :development do
 end
 
 group :test do
+  gem 'svm_helper', github: 'sch1zo/svm_helper'
   gem 'rake'
   gem 'rspec'
   gem 'mocha', require: 'mocha/api'

@@ -3,6 +3,15 @@
 shared helper class which saves settings of a preprocessing and feature selection.
 Also can load a libsvm model to predict data.
 
+## Dependencies
+
+- although `svm_helper` is available as gem it is probably better to
+require the current version from git
+
+```
+gem 'svm_helper', github: 'sch1zo/svm_helper'
+```
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -26,19 +35,6 @@ SvmPredictor::Model.new svm: @svm,
                         classification: :function,
                         basedir: 'tmp/spec'
 ```
-
-### API
-
-start with
-
-    svm_predictor_api
-
-then you can test with something like this
-
-    curl -v -H "Accept: application/json" -H "Content-type: application/json" -X POST -d ' {"user":{"first_name":"firstname","last_name":"lastname","email":"email@email.com","password":"app123","password_confirmation":"app123"}}' localhost:4567/predict
-
-
-## Contributing
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
