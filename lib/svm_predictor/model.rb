@@ -93,6 +93,7 @@ module SvmPredictor
       self.dictionary ||= selector.global_dictionary
       self.preprocessor_properties.merge!(id_map: preprocessor.id_map.to_a ) if preprocessor.respond_to? :id_map
       self.selector_properties.merge!(gram_size: selector.gram_size ) if selector.respond_to? :gram_size
+      self.selector_properties.merge!(word_selection: selector.word_selection ) if selector.respond_to? :word_selection
       self.properties.merge!(dictionary_size: dictionary.size, cost: svm.param.c, gamma: svm.param.gamma)
     end
     def libsvm_filename
