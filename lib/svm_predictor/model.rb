@@ -19,7 +19,6 @@ module SvmPredictor
     attr_accessor :svm,
                   :preprocessor,
                   :selector,
-                  :trainer,
                   :basedir
     #
     # predict the label w/ probability of a given job
@@ -52,7 +51,7 @@ module SvmPredictor
       raise 'basedir not specified' if basedir.nil? || basedir.empty?
       prepare_model
       svm.save(File.join(basedir, libsvm_filename))
-      IO.write(File.join(basedir, filename), self.to_json(pretty))
+      IO.write(File.join(basedir, filename), self.to_json(pretty), mode: 'wb')
     end
 
     def self.load_file(filename)
@@ -90,7 +89,6 @@ module SvmPredictor
       self.libsvm_file ||= libsvm_filename
       self.preprocessor_class ||= preprocessor.class.to_s
       self.selector_class ||= selector.class.to_s
-      self.trainer_class ||= trainer.class.to_s
       self.dictionary ||= selector.global_dictionary
       if preprocessor.respond_to? :id_map
         self.preprocessor_properties.merge!(id_map: preprocessor.id_map.to_a )
@@ -100,9 +98,7 @@ module SvmPredictor
       end
       self.properties.merge!(dictionary_size: dictionary.size,
                             cost: svm.param.c,
-                            gamma: svm.param.gamma,
-                            evaluator: trainer.evaluator,
-                            cross_validation: trainer.number_of_folds)
+                            gamma: svm.param.gamma)
     end
     def libsvm_filename
       "#{"%04d" % id}-model.libsvm"
