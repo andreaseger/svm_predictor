@@ -7,6 +7,7 @@ module SvmPredictor
   class Model < SvmPredictor::Base
     attribute :libsvm_file,
               :classification,
+              :language,
               :preprocessor_class,
               :selector_class,
               :trainer_class,
@@ -63,6 +64,7 @@ module SvmPredictor
     def self.load(params)
       p = super
       p.svm = Libsvm::Model.load(File.join(p.basedir, p.libsvm_file))
+      p.language ||= 'en'
       p.preprocessor = if p.preprocessor_class =~ /mapping/i
                         id_map = Hash[p.preprocessor_properties['id_map']]
                         p.preprocessor_class.constantize.new(id_map, {parallel: true}.merge(p.preprocessor_properties.except('id_map')))
@@ -90,8 +92,12 @@ module SvmPredictor
       self.preprocessor_class ||= preprocessor.class.to_s
       self.selector_class ||= selector.class.to_s
       self.dictionary ||= selector.global_dictionary
+      self.language ||= preprocessor.language
       if preprocessor.respond_to? :id_map
         self.preprocessor_properties.merge!(id_map: preprocessor.id_map.to_a )
+      end
+      [:language].each do |key|
+        self.preprocessor_properties.merge!(key => preprocessor.send(key) ) if preprocessor.respond_to? key
       end
       [:gram_size, :word_selection, :classification_encoding].each do |key|
         self.selector_properties.merge!(key => selector.send(key) ) if selector.respond_to? key
@@ -104,7 +110,7 @@ module SvmPredictor
       "#{"%04d" % id}-model.libsvm"
     end
     def filename
-      "#{"%04d" % id}-predictor.json"
+      "#{"%04d" % id}-#{language}-#{classification}-predictor.json"
     end
     def next_id
       raise 'basedir not specified' if basedir.nil?

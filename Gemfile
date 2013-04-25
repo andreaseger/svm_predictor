@@ -20,7 +20,7 @@ group :development do
 end
 
 group :test do
-  gem 'svm_helper', github: 'sch1zo/svm_helper'
+  # gem 'svm_helper', github: 'sch1zo/svm_helper'
   gem 'rake'
   gem 'rspec'
   gem 'mocha', require: 'mocha/api'
