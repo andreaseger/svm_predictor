@@ -84,6 +84,9 @@ module SvmPredictor
     def results_filename
       "#{"%04d" % id}-results"
     end
+    def filename
+      "#{"%04d" % id}-#{language}-#{classification}-predictor.json"
+    end
     private
     def prepare_model
       self.id ||= next_id
@@ -108,9 +111,6 @@ module SvmPredictor
     end
     def libsvm_filename
       "#{"%04d" % id}-model.libsvm"
-    end
-    def filename
-      "#{"%04d" % id}-#{language}-#{classification}-predictor.json"
     end
     def next_id
       raise 'basedir not specified' if basedir.nil?
