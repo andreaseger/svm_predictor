@@ -114,7 +114,7 @@ module SvmPredictor
     end
     def next_id
       raise 'basedir not specified' if basedir.nil?
-      (Dir["#{@basedir}/*"].map{|e| File.basename(e).match(/^(\d+)-/)[1].to_i }.max || 0).succ
+      (Dir["#{@basedir}/0*"].map{|e| File.basename(e).match(/^(\d+)-/)[1].to_i }.max || 0).succ
     end
   end
 end
