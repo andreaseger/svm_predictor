@@ -48,7 +48,9 @@ describe SvmPredictor::Base do
       end
       it "should generate valid json" do
         json = model.to_json
-        ->{JSON.parse(json)}.should_not raise_error(JSON::ParserError)
+        expect {
+          JSON.parse(json)
+        }.to_not raise_error
       end
       it "should pretty print json it true is passed" do
         model.to_json(true).should match(/\n/)

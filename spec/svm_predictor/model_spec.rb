@@ -69,7 +69,7 @@ describe SvmPredictor::Model do
       model.send(:next_id).should == 1
     end
     it "should select the next available id" do
-      FileUtils.touch('tmp/spec/23-foo')
+      FileUtils.touch('tmp/spec/023-foo')
       model.send(:next_id).should == 24
     end
   end
@@ -98,7 +98,7 @@ describe SvmPredictor::Model do
   end
   context "#load" do
     before(:each) do
-      @svm.save('tmp/spec/345-model.libsvm')
+      @svm.save('tmp/spec/0345-model.libsvm')
     end
     it "should not fail" do
       ->{SvmPredictor::Model.load(modelhash.merge(basedir: 'tmp/spec'))}.should_not raise_error
